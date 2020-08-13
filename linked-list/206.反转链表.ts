@@ -59,6 +59,7 @@ function reverseList(head: ListNode | null): ListNode | null {
 };
 // @lc code=end
 
+// 空间复杂度O(1)
 function reverseList(head: ListNode | null): ListNode | null {
   if (head == null) return null
   let previous: ListNode | null = null
@@ -74,6 +75,7 @@ function reverseList(head: ListNode | null): ListNode | null {
 
 
 
+// 利用数组存储链表, 反转, 空间复杂度 O(n)
 function reverseList(head: ListNode | null): ListNode | null {
   let bak: ListNode[] = []
   if (head == null) return null
