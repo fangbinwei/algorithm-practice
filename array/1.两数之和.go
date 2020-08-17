@@ -49,3 +49,46 @@ func twoSum(nums []int, target int) []int {
 }
 
 // @lc code=end
+
+import (
+	"sort"
+)
+
+func findIndex(s []int, target int, index int) (int, bool) {
+	for i := index; i < len(s); i++ {
+		if s[i] == target {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+func twoSum(nums []int, target int) []int {
+	l := len(nums)
+	if l < 2 {
+		return nil
+	}
+	tmp := make([]int, l)
+	copy(tmp, nums)
+	sort.Ints(nums)
+	for i, j := 0, l-1; i < j; {
+		sum := nums[i] + nums[j]
+		if sum == target {
+			i1, _ := findIndex(tmp, nums[i], 0)
+			var i2 int
+			if nums[i] == nums[j] {
+				i2, _ = findIndex(tmp, nums[i], i1+1)
+			} else {
+				i2, _ = findIndex(tmp, nums[j], 0)
+			}
+
+			return []int{i1, i2}
+		} else if sum > target {
+			j--
+		} else {
+			i++
+		}
+	}
+	return nil
+
+}
