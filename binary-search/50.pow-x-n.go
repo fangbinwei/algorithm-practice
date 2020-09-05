@@ -46,6 +46,43 @@ package main
 
 // @lc code=start
 // binary-search
+// 迭代版本
+func myPow(x float64, n int) float64 {
+	if n == 0 {
+		return 1
+	}
+	// 利用快速幂, 二进制展开
+	// https://leetcode-cn.com/problems/powx-n/solution/powx-n-by-leetcode-solution/
+
+	var result float64 = 1
+	flag := false
+	if n < 0 {
+		n = -n
+		flag = true
+	}
+
+	for n > 0 {
+		// n = bm...b3 b2 b1 
+		// x^n = x^(1*b1)x^(2*b2)x^(4*b3)
+		// 判断bm是否为1, 为1 要累计到结果中
+		if n%2 == 1 {
+			result = result * x
+		}
+
+		x = x * x
+		n = n / 2
+
+	}
+	if flag {
+		result = 1 / result
+	}
+
+	return result
+
+}
+
+// @lc code=end
+
 func myPow(x float64, n int) float64 {
 	if n == 0 {
 		return 1
@@ -64,5 +101,3 @@ func myPow(x float64, n int) float64 {
 		return 1 / myPow(x, -n)
 	}
 }
-
-// @lc code=end
