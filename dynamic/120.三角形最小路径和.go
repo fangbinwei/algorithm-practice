@@ -42,6 +42,54 @@ package leetcode_120
  */
 
 // @lc code=start
+// 压缩空间
+// 另一种优化方式, 目前是从上往下遍历, 可以从下往上走
+// https://leetcode-cn.com/problems/triangle/solution/di-gui-ji-yi-hua-dp-bi-xu-miao-dong-by-sweetiee/
+func minimumTotal(triangle [][]int) int {
+	row := len(triangle)
+	col := len(triangle[row-1])
+
+	dp := make([]int, col+1, col+1)
+
+	// 一共row+1行
+	for i := 1; i <= row; i++ {
+		for j := len(triangle[i-1]); j >= 1; j-- {
+			tr := triangle[i-1][j-1]
+			// 第一列数据
+			if j == 1 {
+				dp[j] = dp[j] + tr
+			} else if j == len(triangle[i-1]) {
+				// 最后一列数据
+				// 因为需要用到j-1的数据, 要倒着遍历j,
+				// 保证拿到的dp[j-1], 是dp[i-1][j-1]的值
+				dp[j] = dp[j-1] + tr
+			} else {
+				// 中间数据
+				dp[j] = minInt(dp[j], dp[j-1]) + tr
+			}
+		}
+	}
+
+	min := dp[1]
+
+	// 最后一行总共有col+1列, 所以是<=col
+	for index := 2; index <= col; index++ {
+		min = minInt(min, dp[index])
+	}
+	return min
+
+}
+
+func minInt(a, b int) int {
+	if a < b {
+		return a
+	} else {
+		return b
+	}
+}
+
+// @lc code=end
+
 // 无压缩空间
 func minimumTotal(triangle [][]int) int {
 	row := len(triangle)
@@ -52,6 +100,7 @@ func minimumTotal(triangle [][]int) int {
 		dp[index] = make([]int, col+1)
 	}
 
+	// 一共row+1行
 	for i := 1; i <= row; i++ {
 		for j := 1; j <= len(triangle[i-1]); j++ {
 			tr := triangle[i-1][j-1]
@@ -70,19 +119,10 @@ func minimumTotal(triangle [][]int) int {
 
 	min := dp[row][1]
 
+	// 最后一行总共有col+1列, 所以是<=col
 	for index := 2; index <= col; index++ {
 		min = minInt(min, dp[row][index])
 	}
 	return min
 
 }
-
-func minInt(a, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
-}
-
-// @lc code=end
