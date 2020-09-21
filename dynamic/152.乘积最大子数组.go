@@ -1,6 +1,8 @@
 package leetcode_152
 
-import "math"
+import (
+	"math"
+)
 
 /*
  * @lc app=leetcode.cn id=152 lang=golang
@@ -35,8 +37,50 @@ import "math"
  * 解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
  *
  */
-
 // @lc code=start
+// 动态规划, 压缩空间
+func maxProduct(nums []int) int {
+	dp := []int{1, 1}
+	max := math.MinInt64
+
+	for i := 1; i <= len(nums); i++ {
+		current := nums[i-1]
+		preMin := dp[1]
+		preMax := dp[0]
+		if current > 0 {
+			// current * max
+			dp[0] = maxInt(preMax*current, current)
+			// current * min
+			dp[1] = minInt(preMin*current, current)
+		}
+		if current <= 0 {
+			// current * min
+			dp[0] = maxInt(preMin*current, current)
+			// current * max
+			dp[1] = minInt(preMax*current, current)
+		}
+		max = maxInt(max, dp[0])
+	}
+	return max
+
+}
+
+func maxInt(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func minInt(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
+
+// @lc code=end
+
 // 动态规划, 无压缩空间
 func maxProduct(nums []int) int {
 	// dp[i][0] max
@@ -67,19 +111,3 @@ func maxProduct(nums []int) int {
 	return max
 
 }
-
-func maxInt(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func minInt(a, b int) int {
-	if a > b {
-		return b
-	}
-	return a
-}
-
-// @lc code=end
