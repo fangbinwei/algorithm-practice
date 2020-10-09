@@ -14,36 +14,36 @@
  * Testcase Example:  '[1,2,3,4,5]\n2'
  *
  * 给你一个链表，每 k 个节点一组进行翻转，请你返回翻转后的链表。
- * 
+ *
  * k 是一个正整数，它的值小于或等于链表的长度。
- * 
+ *
  * 如果节点总数不是 k 的整数倍，那么请将最后剩余的节点保持原有顺序。
- * 
- * 
- * 
+ *
+ *
+ *
  * 示例：
- * 
+ *
  * 给你这个链表：1->2->3->4->5
- * 
+ *
  * 当 k = 2 时，应当返回: 2->1->4->3->5
- * 
+ *
  * 当 k = 3 时，应当返回: 3->2->1->4->5
- * 
- * 
- * 
+ *
+ *
+ *
  * 说明：
- * 
- * 
+ *
+ *
  * 你的算法只能使用常数的额外空间。
  * 你不能只是单纯的改变节点内部的值，而是需要实际进行节点交换。
- * 
- * 
+ *
+ *
  */
 
- function ListNode(val, next) {
-     this.val = (val===undefined ? 0 : val)
-     this.next = (next===undefined ? null : next)
- }
+function ListNode(val, next) {
+  this.val = val === undefined ? 0 : val
+  this.next = next === undefined ? null : next
+}
 // @lc code=start
 /**
  * Definition for singly-linked list.
@@ -57,8 +57,37 @@
  * @param {number} k
  * @return {ListNode}
  */
-var reverseKGroup = function(head, k) {
-    
+// 递归
+var reverseKGroup = function (head, k) {
+  if (head == null || head.next == null) return head
+
+  let tmp = head
+
+  for (let i = 0; i < k - 1; i++) {
+    tmp = tmp.next
+    if (tmp == null) {
+      return head
+    }
+  }
+
+  let c = head
+  let nextNode = c.next
+  // 对k个节点进行reverse
+  for (let i = 0; i < k - 1; i++) {
+    let tmp = nextNode.next
+    nextNode.next = c
+    c = nextNode
+    nextNode = tmp
+  }
+
+  //和下一个group的节点建立联系
+  head.next = reverseKGroup(nextNode, k)
+  return c
+}
+// @lc code=end
+
+// 遍历
+var reverseKGroup = function (head, k) {
   if (head == null || head.next == null) return head
 
   let dummy = new ListNode(-1, head)
@@ -66,38 +95,32 @@ var reverseKGroup = function(head, k) {
   let current = head
   let prev = dummy
 
-  while (current!= null) {
+  while (current != null) {
     let tmp = current
 
-    let enough = true
-    for (let i=0; i < k-1; i++) {
+    for (let i = 0; i < k - 1; i++) {
       tmp = tmp.next
       if (tmp == null) {
-        enough = false
-        break
+        return dummy.next
       }
     }
 
-    if (enough) {
-      let first = current
-      let c = current
-      let nextNode = c.next
-      for (let i=0; i < k -1; i++) {
-        let tmp = nextNode.next
-        nextNode.next = c
-        c = nextNode
-        nextNode = tmp
-      }
-      prev.next = c
-
-      first.next = nextNode
-      prev = first
-      current = nextNode
-    } else {
-      break
+    let first = current
+    let c = current
+    let nextNode = c.next
+    for (let i = 0; i < k - 1; i++) {
+      let tmp = nextNode.next
+      nextNode.next = c
+      c = nextNode
+      nextNode = tmp
     }
+    // 更新和上一个group的节点联系, 因为当前group内反转了
+    prev.next = c
+
+    // 和下一个group的节点建立联系
+    first.next = nextNode
+    prev = first
+    current = nextNode
   }
   return dummy.next
-};
-// @lc code=end
-
+}
