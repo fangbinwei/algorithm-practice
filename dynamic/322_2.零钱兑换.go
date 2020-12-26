@@ -1,5 +1,4 @@
-package leetcode_322
-
+package leetcode322t2
 
 /*
  * @lc app=leetcode.cn id=322 lang=golang
@@ -39,28 +38,29 @@ package leetcode_322
  *
  */
 
+// Count(i, a) i种硬币, a总金额
+// Count(i, a) = min{Count(i-1, a), Count(i, a-coins_i)+1}
 // @lc code=start
-// 完全背包, 压缩空间
 func coinChange(coins []int, amount int) int {
 	dp := make([]int, amount+1)
 	dp[0] = 0
-	for index := range dp {
-		if index == 0 {
-			continue
-		}
-		dp[index] = amount + 1
+	for i := 1; i <= amount; i++ {
+		// 初始化+∞ 
+		dp[i] = amount +1
 	}
 
-	for i, l := 1, len(coins); i <= l; i++ {
-		for j := coins[i-1]; j <= amount; j++ {
-			dp[j] = minInt(dp[j], dp[j-coins[i-1]]+1)
+	for i := 1; i <= len(coins); i++ {
+		for j := 0; j <= amount; j++ {
+			if j-coins[i-1] >= 0 {
+				dp[j] = minInt(dp[j], dp[j-coins[i-1]]+1)
+			}
 		}
 	}
-
-	if dp[amount] > amount {
+	if dp[amount] == amount +1 {
 		return -1
 	}
 	return dp[amount]
+
 }
 func minInt(a, b int) int {
 	if a < b {
@@ -70,39 +70,3 @@ func minInt(a, b int) int {
 }
 
 // @lc code=end
-func coinChange(coins []int, amount int) int {
-	// 使用slice 比map性能好, leetcode 216 ms	 -> 28ms
-	memo := make([]int, amount)
-
-	return dp(coins, amount, memo)
-}
-func dp(coins []int, amount int, memo []int) int {
-	if amount == 0 {
-		return 0
-	}
-	if amount < 0 {
-		return -1
-	}
-	res := -1
-	if v := memo[amount-1]; v != 0 {
-		return v
-	}
-
-	// dp(amount) = min{dp(amount - coin) + 1, coin 属于coins}
-	for _, coin := range coins {
-		count := dp(coins, amount-coin, memo) + 1
-		if count == 0 {
-			continue
-		}
-		if count < res {
-			res = count
-		}
-
-		if res == -1 {
-			res = count
-		}
-	}
-	memo[amount-1] = res
-
-	return res
-}
