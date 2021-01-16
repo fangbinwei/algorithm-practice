@@ -109,3 +109,33 @@ func maxInt(a, b int) int {
 }
 
 // @lc code=end
+
+// stack
+func longestValidParentheses2(s string) int {
+	if len(s) == 0 || len(s) == 1 {
+		return 0
+	}
+	m := 0
+
+	stack := make([]int, 0, len(s))
+
+	stack = append(stack, -1)
+
+	// 栈底始终是最后一个没有被匹配的右括号的下标
+	for i := 0; i < len(s); i++ {
+		if s[i] == '(' {
+			stack = append(stack, i)
+			continue
+		} else {
+
+			stack = stack[:len(stack)-1]
+			if len(stack) > 0 {
+				m = maxInt(m, i-stack[len(stack)-1])
+			} else {
+				stack = append(stack, i)
+			}
+		}
+	}
+
+	return m
+}
