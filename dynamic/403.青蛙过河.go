@@ -63,6 +63,40 @@ func canCross(stones []int) bool {
 	if stones[1] != 1 {
 		return false
 	}
+	m := make(map[int]map[int]bool)
+
+	for _, v := range stones {
+		// map key为stone的序号, vaule为一个[int]bool, key为青蛙在当前stone可以跳的步数
+		m[v] = make(map[int]bool)
+	}
+	m[0][1] = true
+
+	for i := 0; i < len(stones)-1; i++ {
+		for step := range m[stones[i]] {
+			// 可以跳step步
+			reach := stones[i] + step
+			if reach == stones[len(stones)-1] {
+				return true
+			}
+			if _, ok := m[reach] ; ok {
+				m[reach][step] = true
+				if step -1 > 0 {
+					m[reach][step-1] = true
+				}
+				m[reach][step+1] = true
+			}
+		}
+	}
+	return false
+
+}
+
+// @lc code=end
+
+func canCross2(stones []int) bool {
+	if stones[1] != 1 {
+		return false
+	}
 	m := make(map[int]map[int]int)
 
 	for _, v := range stones {
@@ -72,12 +106,15 @@ func canCross(stones []int) bool {
 	}
 	m[1][1] = 1
 
-	for i := 1; i < len(stones); i++ {
+	for i := 1; i < len(stones)-1; i++ {
 		for _, k := range m[stones[i]] {
 			// 可以通过k步到达位置i
 			// 走j到达下一个位置
 			for j := k - 1; j <= k+1; j++ {
 				if j > 0 {
+					if j+stones[i] == stones[len(stones)-1] {
+						return true
+					}
 					// 走j步所到的位置 是存在的
 					if _, ok := m[j+stones[i]]; ok {
 						m[j+stones[i]][stones[i]] = j
@@ -90,4 +127,50 @@ func canCross(stones []int) bool {
 
 }
 
-// @lc code=end
+
+func canCross(stones []int) bool {
+	if stones[1] != 1 {
+		return false
+	}
+
+	for i := 2; i < len(stones); i++ {
+		// i位置最多跳i+1步
+		// 0,1,3,6,10  这样i位置都跳了i+1步, 其他情况都不会超过i+1
+		if stones[i] > stones[i-1] + i {
+			return false
+		}
+	}
+	position := []int{}
+	jump := []int{}
+	positionMap := make(map[int]struct{})
+
+	for _, v := range stones {
+		positionMap[v] = struct{}{}
+	}
+
+	position = append(position, stones[0])
+	jump = append(jump, 0)
+
+	for len(position) > 0 {
+		// 这里一定要从尾部取, 这样能尽快遍历位置后面的石块
+		pos := position[len(position)-1]
+		position = position[:len(position)-1]
+
+		step := jump[len(jump)-1]
+		jump = jump[:len(jump)-1]
+
+		for s := step - 1; s <= step+1; s++ {
+			if s > 0 {
+				reach := pos + s
+				if reach == stones[len(stones)-1] {
+					return true
+				}
+				if _, ok := positionMap[reach]; ok {
+					position = append(position, reach)
+					jump = append(jump, s)
+				}
+			}
+		}
+	}
+	return false
+}
