@@ -83,6 +83,7 @@ func shortestPathBinaryMatrix(grid [][]int) int {
 	// BFS
 	for len(queue) > 0 {
 		s := len(queue)
+		ans++
 		for i := 0; i < s; i++ {
 			node := queue[i]
 
@@ -116,7 +117,6 @@ func shortestPathBinaryMatrix(grid [][]int) int {
 		}
 
 		queue = queue[s:]
-		ans++
 	}
 	return -1
 }
