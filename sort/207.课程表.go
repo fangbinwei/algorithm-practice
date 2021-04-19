@@ -57,6 +57,46 @@ package leetcode207
  */
 
 // @lc code=start
+// DFS
+func canFinish(numCourses int, prerequisites [][]int) bool {
+	graph := make([][]int, numCourses)
+	visited := make([]int, numCourses)
+	valid := true
+
+	for _, v := range prerequisites {
+		graph[v[1]] = append(graph[v[1]], v[0])
+	}
+	var dfs func(int)
+
+	dfs = func(n int) {
+		visited[n] = 1
+		for _, v:= range graph[n] {
+			if visited[v] == 0 {
+				dfs(v)
+				if !valid {
+					return
+				}
+				// 形成环
+			} else if visited[v] == 1 {
+				valid = false
+				return
+			}
+		}
+		// 这个n节点的所有叶子节点都遍历过了/ 或者其没有叶子节点
+		visited[n] = 2
+	}
+
+	for i := 0; i < numCourses; i++ {
+		if visited[i] == 0 {
+			dfs(i)
+		}
+	}
+	return valid
+
+}
+
+// @lc code=end
+
 // BFS
 func canFinish(numCourses int, prerequisites [][]int) bool {
 	indegree := make([]int, numCourses)
@@ -91,5 +131,3 @@ func canFinish(numCourses int, prerequisites [][]int) bool {
 	return len(res) == numCourses
 
 }
-
-// @lc code=end
