@@ -91,7 +91,7 @@ func levelOrder(root *TreeNode) [][]int {
 // @lc code=end
 
 // 利用queue
-func levelOrder(root *TreeNode) [][]int {
+func levelOrder2(root *TreeNode) [][]int {
 	ans := make([][]int, 0, 10)
 	queue := make([]*TreeNode, 0, 10)
 	if root == nil {
@@ -99,33 +99,23 @@ func levelOrder(root *TreeNode) [][]int {
 	}
 
 	queue = append(queue, root)
-	// 使用nil作为标记, nil前面为同一层的节点
-	queue = append(queue, nil)
-
-	layer := make([]int, 0, 10)
 
 	for len(queue) > 0 {
-		head := queue[0]
-		queue = queue[1:]
 
-		if head == nil {
-			ans = append(ans, layer)
-			if len(queue) == 0 {
-				break
+		l := len(queue)
+		layer := make([]int, 0, 10)
+		for i := 0; i < l; i++ {
+			head := queue[0]
+			queue = queue[1:]
+			layer = append(layer, head.Val)
+			if head.Left != nil {
+				queue = append(queue, head.Left)
 			}
-
-			layer = make([]int, 0, 10)
-			queue = append(queue, nil)
-			continue
+			if head.Right != nil {
+				queue = append(queue, head.Right)
+			}
 		}
-		if head.Left != nil {
-			queue = append(queue, head.Left)
-		}
-		if head.Right != nil {
-			queue = append(queue, head.Right)
-		}
-		layer = append(layer, head.Val)
-
+		ans = append(ans, layer)
 	}
 
 	return ans
