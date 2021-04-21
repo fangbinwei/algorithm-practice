@@ -43,6 +43,7 @@ func permute(nums []int) [][]int {
 
 	var _permute func([]int, []int)
 	_permute = func(nums []int, collection []int) {
+		// 每次执行collection都是新构造的
 		if len(collection) == stop {
 			ans = append(ans, collection)
 			return
@@ -65,3 +66,34 @@ func permute(nums []int) [][]int {
 }
 
 // @lc code=end
+
+func permute2(nums []int) [][]int {
+	ans := make([][]int, 0)
+	if len(nums) == 0 {
+		return ans
+	}
+	if len(nums) == 1 {
+		return [][]int{{nums[0]}}
+	}
+
+	// 全程使用同一个q
+	q := []int{}
+
+	var backtracking func(n []int)
+	backtracking = func(n []int) {
+		if len(n) == 0 {
+			ans = append(ans, append([]int{}, q...))
+			return
+		}
+		for i := 0; i < len(n); i++ {
+			q = append(q, n[i])
+			res := append(n[:i:i], n[i+1:]...)
+			backtracking(res)
+			q = q[:len(q)-1]
+		}
+
+	}
+	backtracking(nums)
+
+	return ans
+}
